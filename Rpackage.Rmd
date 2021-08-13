@@ -1,0 +1,445 @@
+---
+title: "컨트리뷰션 아카데미"
+author: "유충현"
+date: " 2017-02-07"
+always_allow_html: yes
+output:
+  bitRtemplate::bitr_templ_html:
+    toc: true
+    maintitle: "오픈통계패키지 OJT"    
+    subtitle: "R 패키지 개발"
+    menu_url: "https://use-r.kr/,https://r2bit.com/onboard/ojt.html"
+    menu_name: "한국 R 컨퍼런스, Open UP On-Boarding"
+    blank: true
+    number_sections: true
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE, 
+                      collapse = FALSE,
+                      comment = "",
+                      fig.align = "center")
+knitr::opts_chunk$set(fig.width = 10, fig.height = 7)
+
+library(bitRtemplate)
+```
+
+```{css, echo=FALSE}
+:root {
+  --custom-grey60:      rgb(102, 102, 102);
+  --custom-grey20:      rgb(204, 204, 204);
+  --custom-grey10:      rgb(230, 230, 230);
+  --custom-blue:        rgb(0, 114, 188);
+  --custom-lightblue:   rgb(204, 227, 242);
+  --custom-orange:      rgb(255, 127, 42); 
+  --custom-lightorange: rgb(255, 204, 170); 
+}
+
+.navbar {
+    border-bottom : 2px solid var(--custom-lightblue) !important;
+}
+
+h1, h2, h3, p {
+   line-height: 150%; 
+}
+```
+
+# R 코딩 스타일
+혼자서 패키지를 개발할 경우에는 문제가 덜하지만, 여럿이 협업해서 패키지를 개발할 경우에는 R 코딩 스타일이 이슈가 될 수 있다. 
+사람마다 서로 다른 코딩 스타일을 사용할 경우에는 코드의 일관성이 결여되고 협업에 어려움이 따르게 된다. 이 경우에는 서로 합일한 R 코딩 스타일 규칙을 따르는 것이 필요하다.
+
+~~R 코딩 스타일은 Google의 R 스타일 가이드([https://google.github.io/styleguide/Rguide.xml](https://google.github.io/styleguide/Rguide.xml){target="_blank"})를 준수하는 것을 권장한다.~~ (2017년 문서 작성 당시의 기준)
+
+그러나, 2021년 8월 기준으로는 **The tidyverse style guide**([https://style.tidyverse.org/](https://style.tidyverse.org/){target="_blank"})를 준수하는 것을 권장한다.
+
+## 중요한 R 코딩 스타일
+
+The tidyverse style guide에 기술된 대표적인 코딩 스타일 컨벤션
+
+|   구분     |     규약                             |      Good                      |  Bad                    |
+|:-----------|:-------------------------------------|:-------------------------------|:------------------------|
+| 객체 이름  | 소문자로 정의                        | day_one, day_1                 | DayOne, dayone          |
+| 객체 이름  | 예약어나, 기정의 이름 불가           |                                | T, mean                 | 
+| 공백       | 컴마 뒤에 공백문자                   | x[, 1]                         | x[,1], x[  ,1]          |
+|            | 함수 호출 괄호 앞뒤에 공백문자 불가  | mean(x, na.rm = TRUE)          | mean (x, na.rm = TRUE)  |
+|            |                                      |                                | mean( x, na.rm = TRUE ) |
+|            | 괄호 뒤에 공백문자                   | function(x) {}                 | function (x) {}         |
+|            |                                      |                                | function(x){}           |
+|            | **연산자 앞 뒤에 공백문자**          | height <- (feet * 12) + inches | height<-feet*12+inches  |
+|            |                                      | mean(x, na.rm = TRUE)          | mean(x, na.rm=TRUE)     |
+|            | **연산자 앞 뒤에 공백문자 불가**     | sqrt(x^2 + y^2)                | sqrt(x ^ 2 + y ^ 2)     |
+|            |                                      | df$z                           | df $ z                  |
+|            |                                      | x <- 1:10                      | x <- 1 : 10             |
+
+
+## 기타 중요한 규약
+
+### 객체 이름
+객체의 이름은 영문과 숫자, 그리고 문자 "_"으로 정의한다. 그리고, **간결하지만, 의미를 충분히 전달해야 한다**.
+
+* 변수는 명사를 사용하고,
+    + 예) item, score
+* 함수는 동사를 사용하고
+    + 예) edit_table, print
+
+### 중괄호 내에서는 항상 들여 쓰기 
+
+```{r, eval=FALSE, echo=TRUE}
+# Good
+if (y < 0 && debug) {
+  message("y is negative")
+}
+
+# Bad
+if (y < 0 && debug) {
+message("Y is negative")
+}
+```
+
+### 코드의 라인 길이는 80자 이내 
+코드의 라인 길이는 80자 이내로 관리한다. Rstudio의 Global Options... > Code > Display 메뉴에서 `Show margin`을 체크하면, 에디터에 기준선이 80자를 표현해서 80자 이내로 관리하는데 유용하다.
+
+```{r margin, fig.align='center', fig.pos='h', echo=FALSE, out.width = '70%'}
+knitr::include_graphics('./img/margin.png', dpi = 300)
+```
+
+### 코드 들여쓰기(indentation)은 공백 2자로, 탭을 사용하지 않는다.
+코드의 들여쓰기는 공백 2로 설정한다. Rstudio의 Global Options... > Code > Edit 메뉴에서 `Insert spaces for tab`을 체크한 후, 탭을 공백 2개로 설정하면 유용한다.
+
+```{r tab, fig.align='center', fig.pos='h', echo=FALSE, out.width = '70%'}
+knitr::include_graphics('./img/tab.png', dpi = 300)
+```
+
+### 할당 연산자의 선택
+* 이름에 객체를 할당할 때에는 `<-` 연산자를 사용
+    + 예) average <- mean(x, na.rm = TRUE)
+* 함수에서 인수에 인수값을 할당할 때에는 `=`를 사용
+    + 예) edit_table, print
+
+### 주석의 생활화
+주요 로직이나, 공유해야할 사항, 남겨야할 정보 등을 반드시 주석으로 남겨야 한다. 
+
+
+# 코딩 스타일 지원 패키지
+
+이 장에서는 tidyverse R 코딩 스타일 가이드에 어느 정도 부합하는 몇 가지 R 패키지를 소개한다. 그리고 이들 패키지로 사용자가 작성한 소스가 R 코딩 스타일에 부합하는지의 여부를 점검하거나, 패키지에서 추천하는 코딩 스타일로 소스를 변경해주는 방법을 알아본다.
+
+> 이들 패키지가 100% 완전한 코딩 스타일을 준수하는 코드로 바꿔주거나 제언해주지 않음을 염두에 두어야 한다.
+
+## formatR
+formatR 패키지는 R 코드의 포맷을 자동으로 바꿔주는 기능을 수행하는 패키지다. 
+이 패키지를 사용하여 작성한 R 코드를 스타일 가이드에 의거하여 적절하게 바꿔주는 방법을 살펴본다.
+
+예제는 패키지의 R 소스 코드를 담고 있는 "R" 디렉토리 내의 misc.R 파일에 `getMonthLenth()` 함수 정의 코드가 들어 있음을 가정한다.
+
+R/misc.R 파일의 getMonthLenth() 함수를 정의하는 코드는 다음과 같다.
+
+```{r, eval=FALSE, echo=TRUE}
+getMonthLenth <- function(startYear, startMonth, endYear, endMonth) {
+    ifelse(startMonth > endMonth,
+         12 + endMonth - startMonth + (endYear - startYear - 1) * 12 + 1,
+         endMonth - startMonth + (endYear - startYear) * 12 + 1)
+}
+```
+
+`formatR` 패키지의 `tidy_file()` 함수는 지정한 파일에 대해서 R 코드의 포맷을 자동으로 바꿔주고, `tidy_dir()` 함수는 지정한 디렉토리에 포함된 R 파일에 대해서 코드 포맷을 보정해 준다.
+
+다음은 패키지의 R 소스 코드에 대해서 포맷을 보정해 주는 명령어다. 
+
+```{r, eval=FALSE, echo=TRUE}
+> formatR::tidy_dir("R", indent = 2, width.cutoff = 60)
+tidying R/misc.R
+```
+
+상기 코드가 실행되면 R/misc.R 파일의 getMonthLenth() 함수를 정의하는 코드는 다음과 같이 보정된다. `indent` 인수의 값이 2인것은 들여쓰기를 스페이스 2개로 지정한 것이고, `width.cutoff` 인수는 할 줄에 표현하는 코드의 길이를 60 character로 지정한다는 의미다.
+
+```{r, eval=FALSE, echo=TRUE}
+getMonthLenth <- function(startyear, startmonth, endyear, endmonth) {
+  ifelse(startmonth > endmonth, 12 + endmonth - startmonth + 
+    (endyear - startyear - 1) * 12 + 1, endmonth - startmonth + 
+    (endyear - startyear) * 12 + 1)
+}
+```
+
+
+## lintr
+`lintr` 패키지는 R 코딩 스타일 부합 여부를 점검해준다. R 코드를 변경하지 않고 점검만 해주는 점이 `formatR` 패키지와의 차이점이다. 그러나 `lintr` 패키지의 점검 내용은 포맷보다는 코딩 스타일에 가깝다. 예를 들면 변수의 이름은 소문자로 사용하는 것, 할당 연산자를 `=` 대신에 `<-`를 사용하는 것 등의 암묵적인 R 코딩 스타일의 준수 여부를 체크한다.
+
+`lint_file()` 함수는 지정하는 R 파일에 대해서 R 코딩 스타일의 준수 여부를 체크하고, `lint_package()` 함수는 패키지 내의 R 파일에 대해서 R 코딩 스타일의 준수 여부를 체크한다.
+
+다음은 패키지의 R 소스 코드에 대해서 R 코딩 스타일의 준수 여부를 체크한다. RStudio 상에서의 결과는 아래의 그림처럼 Markers 탭에 표현되며, 체크에서 미준수 항목으로 출력된 개별 라인을 클릭하면, 소스 파일의 해당 위치로 커서가 옮겨진다.
+
+```{r, eval=FALSE, echo=TRUE}
+> lintr::lint_package()
+```
+
+```{r lint, fig.align='center', fig.pos='h', echo=FALSE, out.width = '100%'}
+knitr::include_graphics('./img/lint.png', dpi = 300)
+```
+
+체크에서 미준수 항목으로 출력된 개별 라인을 수정한 후 `lint_package()` 함수를 재 실행하면서 코드를 수정하면 R 코딩 스타일에 부합하는 코드를 작성할 수 있다.
+
+미준수 항목으로 출력된 개별 라인을 수정하여, `getMonthLenth()` 함수를 다음과 같이 재작성하였다.
+
+```{r, eval=FALSE, echo=TRUE}
+get_month_length <- function(startyear, startmonth, endyear, endmonth) {
+  ifelse(startmonth > endmonth, 12 + endmonth - startmonth +
+    (endyear - startyear - 1) * 12 + 1, endmonth - startmonth +
+    (endyear - startyear) * 12 + 1)
+}
+```
+
+# 패키지 관련 파일의 자동 생성
+
+## roxygen2
+`roxygen2` 패키지는 패키지를 개발할 때 help page를 기술하는 파일인 `Rd` 파일과 `NAMESPACE` 파일을 자동으로 작성해준다.
+
+일반적으로 Rd 파일은 패키지 홈 디렉토리의 man 디렉토리에 *.Rd, *.rd 포맷의 이름으로 만든다. 그런데 `roxygen2` 패키지는 패키지를 정의하는 R 소스 파일에 roxygen 형식으로 스크립트를 작성한 후, 자동으로 Rd 파일을 생성한다.
+
+NAMESPACE 파일에는 **패키지에서 참조하는 다른 패키지나 패키지의 함수를 지정하는 import 정보** 및 **패키지의 함수에 접근할 수 있는 export 정보**를 기술한다.
+
+다음은 roxygen 형식으로 스크립트를 작성한 R 소스 파일의 일부분이다.
+
+```{r, eval=FALSE, echo=TRUE}
+#' 두 월도 사이의 개월수 구하기
+#' @description 두개의 년월 사이에 몇 개의 개월이 포함되는 지를 구함
+#' @param startyear integer. 시작하는 년도를 나타내는 수치값
+#' @param startmonth integer. 시작하는 월을 나타내는 수치값
+#' @param endyear integer. 종료하는 년도를 나타내는 수치값
+#' @param endmonth integer. 종료하는 월을 나타내는 수치값
+#' @return 개월수를 나타내는 수치 벡터
+#' @author 유충현
+#' Maintainer: 유충현 <choonghyun.ryu@gmail.com>
+#' @seealso \code{\link{get_next_month}}, \code{\link{is_indate}}
+#' @examples
+#' get_month_length(2015, 3, 2017, 3)
+#' @export
+get_month_length <- function(startyear, startmonth, endyear, endmonth) {
+  ifelse(startmonth > endmonth, 12 + endmonth - startmonth +
+    (endyear - startyear - 1) * 12 + 1, endmonth - startmonth +
+    (endyear - startyear) * 12 + 1)
+}
+```
+
+roxygen 스크립트의 시작은 `#'`로 시작한다. 즉, R 소스 파일에서 `#'`로 시작하는 라인은 roxygen2 패키지가 해석하는 라인이다.
+
+### roxygen2 태그
+roxygen2의 대표적인  태그는 다음과 같다.
+
+* @title : Rd 파일의 \title 태그로 기술될 태그
+    + 함수의 타이틀을 기술
+    + @title을 기술하지 않으면, 첫 줄의 내용이 \title 태그로 기술됨
+* @description : Rd 파일의 \description 태그로 기술될 태그
+    + 함수의 상세 설명을 기술
+* @param : Rd 파일의 \arguments 태그 내의 \item 태그로 기술될 태그
+    + 함수의 인수 이름과 그 내용을 기술
+* @return : Rd 파일의 \value 태그로 기술될 태그
+    + 함수가 반환하는 값에 대한 설명을 기술
+* @author : Rd 파일의 \author 태그로 기술될 태그
+    + 함수 개발자 정보를 기술
+* @seealso : Rd 파일의 \seealso 태그로 기술될 태그
+    + 함께 알아두면 유용한 관련 함수를 기술
+* @examples : Rd 파일의 \examples 태그로 기술될 태그
+    + 함수의 사용 예제를 기술
+* @export : NAMESPACE 파일의 export() 함수로 기술될 태그
+    + NAMESPACE 파일에서의 export 정보를 기술할지의 여부를 지정
+    + 해당 태그를 기술할 경우만 export 정보를 기술한다.
+
+### roxygen2 태그 기반 자동 생성
+roxygen2 패키지의 `roxygenise()` 함수는 R 소스 파일의 roxygen2 태그를 해석하여 도움말 파일인 Rd 파일과 NAMESPACE 파일을 생성해준다. 또한 DESCRIPTION 파일도 업데이트한다.
+
+다음 스크립트를 실행하면 R/misc.R 파일을 읽어서 Rd 파일과 NAMESPACE 파일을 생성하고, DESCRIPTION 파일을 업데이트 한다. 
+
+```{r, eval=FALSE, echo=TRUE}
+roxygen2::roxygenise()
+```
+
+#### Rd 파일의 생성
+R 소스 파일에 도움말인 파일을 만들기 위해서 `get_month_length()` 함수 정의 부 앞에 다음과 같은 roxygen2 태그를 정의하면,
+
+```{r, eval=FALSE, echo=TRUE}
+#' 두 월도 사이의 개월수 구하기
+#' @description 두개의 년월 사이에 몇 개의 개월이 포함되는 지를 구함
+#' @param startyear integer. 시작하는 년도를 나타내는 수치값
+#' @param startmonth integer. 시작하는 월을 나타내는 수치값
+#' @param endyear integer. 종료하는 년도를 나타내는 수치값
+#' @param endmonth integer. 종료하는 월을 나타내는 수치값
+#' @return 개월수를 나타내는 수치 벡터
+#' @author 유충현
+#' Maintainer: 유충현 <antony@hanwha.com>
+#' @seealso \code{\link{get_next_month}}, \code{\link{is_indate}}
+#' @examples
+#' get_month_length(2015, 3, 2017, 3)
+#' @export
+get_month_length <- function(startyear, startmonth, endyear, endmonth) {
+  ifelse(startmonth > endmonth, 12 + endmonth - startmonth +
+    (endyear - startyear - 1) * 12 + 1, endmonth - startmonth +
+    (endyear - startyear) * 12 + 1)
+}
+
+```
+
+`roxygen2::roxygenise()` 명령어는 다음과 같은 man/get_month_length.Rd 파일을 생성한다.
+
+```{r, eval=FALSE, echo=TRUE}
+% Generated by roxygen2: do not edit by hand
+% Please edit documentation in R/misc.R
+\name{get_month_length}
+\alias{get_month_length}
+\title{두 월도 사이의 개월수 구하기}
+\usage{
+get_month_length(startyear, startmonth, endyear, endmonth)
+}
+\arguments{
+\item{startyear}{integer. 시작하는 년도를 나타내는 수치값}
+
+\item{startmonth}{integer. 시작하는 월을 나타내는 수치값}
+
+\item{endyear}{integer. 종료하는 년도를 나타내는 수치값}
+
+\item{endmonth}{integer. 종료하는 월을 나타내는 수치값}
+}
+\value{
+개월수를 나타내는 수치 벡터
+}
+\description{
+두개의 년월 사이에 몇 개의 개월이 포함되는 지를 구함
+}
+\examples{
+get_month_length(2015, 3, 2017, 3)
+}
+\author{
+유충현
+Maintainer: 유충현 <choonghyun.ryu@gmail.com>
+}
+\seealso{
+\code{\link{get_next_month}}, \code{\link{is_indate}}
+}
+```
+
+#### NAMESPACE 파일의 생성
+R/misc.R 파일에는 5개의 함수가 정의되어 있는데, 모두 @export 태그를 사용해서 NAMESPACE 파일에 5개의 export() 함수가 기술된다.
+
+```{r, eval=FALSE, echo=TRUE}
+# Generated by roxygen2: do not edit by hand
+
+export(entropy)
+export(get_month_length)
+export(get_next_month)
+export(installpackage)
+export(is_indate)
+```
+
+#### DESCRIPTION 파일의 수정
+DESCRIPTION 파일에 RoxygenNote 항목이 추가된다.
+
+```{r, eval=FALSE, echo=TRUE}
+Package: hlimisc
+Type: Package
+Title: Some Usefull Miscellaneous
+Version: 0.9.6
+Date: 2017-01-16
+Author: choonghyun ryu
+Maintainer: choonghyun ryu <choonghyun.ryu@gamil.com>
+Description: A collection of other useful functions.
+License: Apache License (== 2.0)
+Encoding: UTF-8
+Depends: R (>= 2.13.0)
+RoxygenNote: 5.0.1
+Suggests: testthat
+```
+
+
+# 단위 테스트 
+작성한 함수들의 단위 테스트(Unit Test)를 지원하는 몇 가지 패키지에 대해서 알아본다.
+
+## devtools
+`devtools` 패키지는 R 패키지 개발을 쉽게 할 수 있도록 도와 주는 패키지다.
+
+`devtools` 패키지의 `use_testthat`() 함수는 testthat 패키지로 단위 테스트를 수행할 수 있는 기본 골격의 파일 구조를 생성해준다. 이 함수는 tests/testthat 디렉토리와 tests/testthat.R 파일을 생성한다.
+
+```{r, eval=FALSE, echo=TRUE}
+> devtools::use_testthat()
+* Adding testthat to Suggests
+* Creating `tests/testthat`.
+* Creating `tests/testthat.R` from template.
+```
+
+tests/testthat.R 파일의 내용은 다음과 같다.
+
+```{r, eval=FALSE, echo=TRUE}
+library(testthat)
+library(hlimisc)
+
+test_check("hlimisc")
+```
+
+## testthat
+`testthat` 패키지는 R 패키지 개발 시 단위 테스트를 쉽게 할 수 있도록 도와 주는 패키지다.
+
+단위 테스트 코드는 tests/testthat 디렉토리의 R 파일에 기술하며 파일이름은 "test"로 시작하여야 하고 확장자는 "R"이나 "r"을 가져야 한다. 
+
+단위 테스트를 위해서 test-entropy.R이라는 파일에 다음과 같은 내용을 기술해 놓았다. 이 테스트 시나리오는 entropy의 단위 테스트 시나리오의 일부이다.
+
+```{r, eval=FALSE, echo=TRUE}
+test_that("entropy test", {
+  expect_equal(round(entropy(c('male', 'male', 'male',
+                               'male', 'female', 'male')), 7), 0.65002245)
+  expect_equal(round(entropy(c(NA, 'male', 'male', 'male', NA, 'male')), 7), 0.3899750)
+  expect_equal(entropy(c(NA, NA, NA, NA)), 0)
+})
+```
+
+> R의 환경변수에서 digits는 소수점 이하를 표현하는 자리수다. 기본 설정은 7이기 때문에 소수점 7자리까지만 표현한다. 그러므로 소수점 이하 자리수가 7자리보다 큰 경우에는 반올림해서 콘솔에 표현한다. 만약 entropy 값이 소수점 이하 7자리보다 클 경우에는 콘솔에 출력한 값이 정확한 값이 아닐 수 있다. 이 경우에는 예제처럼 round() 함수로 적절하게 반올림하지 않으면 심중 팔구는 에러가 발생한다. 그러므로 수치값(실수값)을 반환하는 함수의 단위 테스트에서는 이 점을 주의해야 한다.
+
+```{r}
+options("digits")
+```
+
+상기 단위 테스트 코드는 R 패키지를 build 하는 과정에서 테스트된다. 또한 단위 테스트만 수행하기 위해서는 RStudio의 `"Build > Test Package"` 메뉴나 `Ctrl+Alt+F7` 단축키를 이용한다.
+
+`"Build > Test Package"` 메뉴를 실행하면 Build 탭에 다음과 같은 단위 테스트 결과가 출력된다.
+
+```{r, eval=FALSE, echo=TRUE}
+==> devtools::test()
+
+Loading hlimisc
+Loading required package: testthat
+Testing hlimisc
+1..
+Failed -------------------------------------------------------------------------
+1. Failure: entropy test (@test-entropy.R#2) -----------------------------------
+round(...) not equal to 0.6500225.
+1/1 mismatches
+[1] 0.65 - 0.65 == -5e-08
+
+
+DONE ===========================================================================
+```
+
+결과를 보면 단위 테스트에서 에러가 발생하였음을 알 수 있다. 일부터 에러가 발생할 시나리오를 넣어 놓았던 것이다. 
+
+정상적인 테스트를 위해서 test-entropy.R 파일을 다음처럼 0.65002245를 0.6500224로 수정한다.
+
+```{r, eval=FALSE, echo=TRUE}
+test_that("entropy test", {
+  expect_equal(round(entropy(c('male', 'male', 'male',
+                               'male', 'female', 'male')), 7), 0.6500224)
+  expect_equal(round(entropy(c(NA, 'male', 'male', 'male', NA, 'male')), 7), 0.3899750)
+  expect_equal(entropy(c(NA, NA, NA, NA)), 0)
+})
+```
+
+다시 `"Build > Test Package"` 메뉴를 실행하면 Build 탭에 다음과 같은 단위 테스트 결과가 출력된다. 이번에는 단위 테스트에 에러가 발생하지 않았다.
+
+```{r, eval=FALSE}
+==> devtools::test()
+
+Loading hlimisc
+Loading required package: testthat
+Testing hlimisc
+...
+DONE ===========================================================================
+```
